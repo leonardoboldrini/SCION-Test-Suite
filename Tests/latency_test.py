@@ -76,7 +76,9 @@ def tracerouteAnalysis():
 #add a main
 if __name__ == "__main__":
     total_latency = 0
-    iterations = 100
+    index = sys.argv.index("-n")
+    iterations = sys.argv[index+1]
+
     for i in range(iterations):
         total_latency += tracerouteAnalysis()
     
