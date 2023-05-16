@@ -26,7 +26,7 @@ def tracerouteAnalysis():
             line = proc.stdout.readline()
             iteration += 1
             #print the line not lazily
-            print("Read line: " + str(line))
+            #print("Read line: " + str(line))
             #flush the standard output
             sys.stdout.flush()
             if iteration == 18:
