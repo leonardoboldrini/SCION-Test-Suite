@@ -57,7 +57,12 @@ def tracerouteAnalysis():
             for line in line_list[-3:]:
                 if '*' not in line:
                     num_samples += 1
-                    avg_latency += float(re.sub(r"[^\d.]", '', line))
+                    if "ns" in line:
+                        avg_latency += float(re.sub(r"[^\d.]", '', line))/1000000
+                    elif "us" in line:
+                        avg_latency += float(re.sub(r"[^\d.]", '', line))/1000
+                    else:
+                        avg_latency += float(re.sub(r"[^\d.]",'',line))
             if num_samples > 0:
                 avg_latency /= num_samples
             else:
@@ -65,19 +70,20 @@ def tracerouteAnalysis():
                 avg_latency = 0
 
     print(line_list[-3:])
-    print("Avg Latency, based on " + str(num_samples) + " measures is: "+ str(avg_latency))
+    print("Avg Latency, based on " + str(num_samples) + " measures is: "+ str(round(avg_latency, 3)))
     return avg_latency
 
 #add a main
 if __name__ == "__main__":
     total_latency = 0
-    for i in range(100):
+    iterations = 100
+    for i in range(iterations):
         total_latency += tracerouteAnalysis()
     
     index_d = sys.argv.index("-d")
     if "-i" in sys.argv:
         index_i = sys.argv.index("-i")
-        print(f"Average latency for Path: {sys.argv[index_i+1]}, to the domain: {sys.argv[index_d+1]}, is: {total_latency/10}")
+        print(f"Average latency for Path: {sys.argv[index_i+1]}, to the domain: {sys.argv[index_d+1]}, is: {round((total_latency/iterations), 3)}")
     else:
-        print(f"Average latency for domain: {sys.argv[index_d+1]}, is: {total_latency/10}")
+        print(f"Average latency for domain: {sys.argv[index_d+1]}, is: {round((total_latency/iterations), 3)}")
 
