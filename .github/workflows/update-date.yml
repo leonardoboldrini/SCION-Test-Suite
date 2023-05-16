@@ -11,7 +11,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+      
+      - name: Check repository status
+        run: |
+          git fetch
+          status=$(git status -uno -s)
+          if [[ -n $status ]]; then
+            echo "Repository is not up to date. Proceeding with action..."
+          else
+            echo "Repository is up to date. Skipping action."
+            exit 0
+          fi
+      
       - name: Update date
         run: |
           current_date=$(date +%B' '%d', '%Y)
