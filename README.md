@@ -1,4 +1,3 @@
-[![README up-to-date](https://github.com/MrR0b0t14/SCION-Test-Suite/actions/workflows/update-date.yml/badge.svg)](https://github.com/MrR0b0t14/SCION-Test-Suite/actions/workflows/update-date.yml)
 # SCION-Test-Suite
 This repository provides a python script suite to test 3 SCION's features: 
   - Latency
@@ -29,4 +28,4 @@ At this point you can run the suite, to understand how, run:
 
     ./test_suite.sh --help
     
-**Note:** At this moment ({{DATE}}) the only test available in the suite is about latency, it will run traceroute a specified number of times and will print on standard output the average latency per time and also the total one.
+**Note:** At this moment the only test available in the suite is about latency, it will run traceroute a specified number of times and will print on standard output the average latency per time and also the total one.
