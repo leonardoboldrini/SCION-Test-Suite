@@ -17,7 +17,6 @@ jobs:
           git fetch
           status=$(git status -uno -s)
           echo "$status"
-          git diff
           current_date=$(date +%B' '%d', '%Y)
           sed -i "s/{{DATE}}/$current_date/" README.md
           git config --global user.name 'GitHub Actions'
