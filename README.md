@@ -1,3 +1,4 @@
+[![README up-to-date](https://github.com/MrR0b0t14/SCION-Test-Suite/actions/workflows/update-date.yml/badge.svg)](https://github.com/MrR0b0t14/SCION-Test-Suite/actions/workflows/update-date.yml)
 # SCION-Test-Suite
 This repository provides a python script suite to test 3 SCION's features: 
   - Latency
