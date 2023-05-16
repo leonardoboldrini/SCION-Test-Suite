@@ -28,4 +28,4 @@ At this point you can run the suite, to understand how, run:
 
     ./test_suite.sh --help
     
-**Note:** At this moment ( {{DATE}} ) the only test available in the suite is about latency, it will run traceroute a specified number of times and will print on standard output the average latency per time and also the total one.
+**Note:** At this moment ( May 16, 2023 ) the only test available in the suite is about latency, it will run traceroute a specified number of times and will print on standard output the average latency per time and also the total one.
