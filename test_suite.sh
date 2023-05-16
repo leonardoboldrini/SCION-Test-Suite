@@ -8,11 +8,11 @@ domain_name = $1
 
 # Check if the second argument is empty
 if [! -z "$2" ]; then
-    python latency_test.py -d domain_name
+    python latency_test.py -d $domain_name
     exit 1
 else 
     path = $2
-    python latency_test.py -d domain_name -i path
+    python latency_test.py -d $domain_name -i $path
 fi
 
 
