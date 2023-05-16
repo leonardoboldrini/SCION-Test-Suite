@@ -59,6 +59,7 @@ def tracerouteAnalysis():
                     avg_latency += float(re.sub(r"[^\d.]", '', line))
             if num_samples > 0:
                 avg_latency /= num_samples
+                print("Avg Latency, based on " + str(num_samples) + " measures is: "+ str(avg_latency))
             else:
                 print("No samples found")
                 avg_latency = 0
