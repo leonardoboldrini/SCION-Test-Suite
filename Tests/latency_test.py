@@ -42,7 +42,7 @@ def tracerouteAnalysis():
     while True:
         
         line = proc.stdout.readline()
-        print("Read line: " + str(line))
+        #print("Read line: " + str(line))
         if not line:
             break
         
@@ -56,7 +56,6 @@ def tracerouteAnalysis():
         if line_list[0].isdigit():
             for line in line_list[-3:]:
                 if '*' not in line:
-                    print("Entered")
                     num_samples += 1
                     avg_latency += float(re.sub(r"[^\d.]", '', line))
             if num_samples > 0:
@@ -65,14 +64,14 @@ def tracerouteAnalysis():
                 print("No samples found")
                 avg_latency = 0
 
-    print(line_list)
+    print(line_list[-3:])
     print("Avg Latency, based on " + str(num_samples) + " measures is: "+ str(avg_latency))
     return avg_latency
 
 #add a main
 if __name__ == "__main__":
     total_latency = 0
-    for i in range(10):
+    for i in range(100):
         total_latency += tracerouteAnalysis()
     
     index_d = sys.argv.index("-d")
