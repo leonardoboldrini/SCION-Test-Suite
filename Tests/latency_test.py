@@ -79,7 +79,7 @@ if __name__ == "__main__":
     index = sys.argv.index("-n")
     iterations = sys.argv[index+1]
 
-    for i in range(iterations):
+    for i in range(int(iterations)):
         total_latency += tracerouteAnalysis()
     
     index_d = sys.argv.index("-d")
