@@ -1,4 +1,3 @@
-![example workflow](https://https://github.com/MrR0b0t14/SCION-Test-Suite/.github/workflows/update-date.yml/badge.svg)
 # SCION-Test-Suite
 This repository provides a python script suite to test 3 SCION's features: 
   - Latency
