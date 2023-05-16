@@ -12,9 +12,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set date
+      - name: Update date
         run: |
-          echo "Today is $(date +%B) $(date +%d), $(date +%Y)." > README.md
+          current_date=$(date +%B' '%d', '%Y)
+          sed -i "s/{{DATE}}/$current_date/" README.md
 
       - name: Commit and push changes
         run: |
