@@ -9,7 +9,8 @@ iterations=$3
 
 # Check if the second argument is empty
 if [ ! -z "$2" ]; then
-    python3 Tests/latency_test.py -d "$domain_name"
+    echo "Running latency test with no path..."
+    python3 Tests/latency_test.py -d "$domain_name" -n "$iterations"
     exit 1
 else 
     path=$2
