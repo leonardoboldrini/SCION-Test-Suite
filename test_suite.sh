@@ -9,9 +9,9 @@ iterations=$3
 args="$@"
 
 # Iterate through the arguments
-for arg in "$args"; do
+for arg in $args; do
     # Check if the argument is '-help'
-    if [[ "$arg" == "--help" ]]; then
+    if [[ "$arg" == "--help" || "$arg" == "-h" ]]; then
         # Display help information
         echo "Help information: \n"
         echo "Usage: ./test_suite.sh <domain_name> [path] <iterations>"
