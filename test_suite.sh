@@ -13,7 +13,7 @@ for arg in $args; do
     # Check if the argument is '-help'
     if [[ "$arg" == "--help" || "$arg" == "-h" ]]; then
         # Display help information
-        echo "Help information: \n"
+        echo "Help information:"
         echo "Usage: ./test_suite.sh <domain_name> [path] <iterations>"
         echo "- <domain_name>: The domain name of the AS to test (e.g. 17-ffaa:1:1063)"
         echo "- [path]: The pre-selected path to enter in interactive mode (it is an integer). This is optional."
