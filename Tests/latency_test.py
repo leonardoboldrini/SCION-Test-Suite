@@ -63,7 +63,7 @@ def tracerouteAnalysis():
                 avg_latency = 0
 
     print(line_list)
-    print(str(avg_latency))
+    print("Avg Latency, based on " + str(num_samples) + " measures is: "+ str(avg_latency))
     return avg_latency
 
 #add a main
