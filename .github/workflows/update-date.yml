@@ -1,0 +1,25 @@
+name: Update Date
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-date:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set date
+        run: |
+          echo "Today is $(date +%B) $(date +%d), $(date +%Y)." > README.md
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add README.md
+          git commit -m "Update date [skip ci]"
+          git push
