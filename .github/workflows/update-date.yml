@@ -13,7 +13,8 @@ jobs:
       - name: Check repository status and update
         run: |
           git fetch
-          if [[! -z $(git status -uno -s) ]]; then
+          status=$(git status -uno -s)
+          if [ -n "$status" ]; then
             current_date=$(date +%B' '%d', '%Y)
             sed -i "s/{{DATE}}/$current_date/" README.md
             git config --global user.name 'GitHub Actions'
