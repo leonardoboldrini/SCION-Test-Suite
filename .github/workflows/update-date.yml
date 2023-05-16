@@ -13,7 +13,6 @@ jobs:
       - name: Check repository status and update
         run: |
           git fetch
-          git add .
           status=$(git status -uno -s)
           if [[ -n $status ]]; then
             current_date=$(date +%B' '%d', '%Y)
