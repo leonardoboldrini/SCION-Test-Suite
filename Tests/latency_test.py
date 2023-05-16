@@ -61,6 +61,7 @@ def tracerouteAnalysis():
                 avg_latency /= num_samples
             else:
                 avg_latency = 0
+        num_samples = 0
 
     print(line_list)
     print(str(avg_latency))
