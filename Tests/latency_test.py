@@ -36,10 +36,11 @@ def tracerouteAnalysis():
                 proc.stdin.flush()
                 break
 
-    num_samples = 0
-    avg_latency = 0
+    
     # print the result
     while True:
+        num_samples = 0
+        avg_latency = 0
         line = proc.stdout.readline()
         print("Read line: " + str(line))
         if not line:
@@ -61,7 +62,6 @@ def tracerouteAnalysis():
                 avg_latency /= num_samples
             else:
                 avg_latency = 0
-        num_samples = 0
 
     print(line_list)
     print(str(avg_latency))
