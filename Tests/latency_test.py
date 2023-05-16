@@ -51,16 +51,15 @@ def tracerouteAnalysis():
 
 
         #if line starts with digit
-        if line_list[0].isdigit() and '*' not in line_list[-3:]:
-            #take the last 3 elements of the line and make the average
-            num_samples += 1
-            # take the last 3 elements of the line and calculate the average
-            avg_latency += (float(re.sub(r"[^\d.]", '', line_list[-3]))
-                            + float(re.sub(r"[^\d.]", '', line_list[-2]))
-                            + float(re.sub(r"[^\d.]", '', line_list[-1])))
+        if line_list[0].isdigit(): #and '*' not in line_list[-3:]:
+            for line in line_list[-3:]:
+                if '*' not in line:
+                    num_samples += 1
+                    avg_latency += float(re.sub(r"[^\d.]", '', line))
             if num_samples > 0:
                 avg_latency /= num_samples
             else:
+                print("No samples found")
                 avg_latency = 0
 
     print(line_list)
