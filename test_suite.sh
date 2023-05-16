@@ -4,15 +4,15 @@
 
 # Usage: ./test_suite.sh <domain_name> [path]
 args="$@"
-domain_name = $1
+domain_name=$1
 
 # Check if the second argument is empty
-if [! -z "$2" ]; then
-    python latency_test.py -d $domain_name
+if [ ! -z "$2" ]; then
+    python latency_test.py -d "$domain_name"
     exit 1
 else 
-    path = $2
-    python latency_test.py -d $domain_name -i $path
+    path=$2
+    python latency_test.py -d "$domain_name" -i "$path"
 fi
 
 
