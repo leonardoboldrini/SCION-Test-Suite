@@ -26,7 +26,8 @@ def tracerouteAnalysis():
             line = proc.stdout.readline()
             iteration += 1
             #print the line not lazily
-            #print("Read line: " + str(line))
+            #
+            # print("Read line: " + str(line))
             #flush the standard output
             sys.stdout.flush()
             if iteration == 18:
@@ -77,9 +78,9 @@ def tracerouteAnalysis():
 if __name__ == "__main__":
     total_latency = 0
     index = sys.argv.index("-n")
-    iterations = sys.argv[index+1]
+    iterations = int(sys.argv[index+1])
 
-    for i in range(int(iterations)):
+    for i in range(iterations):
         total_latency += tracerouteAnalysis()
     
     index_d = sys.argv.index("-d")
