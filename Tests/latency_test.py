@@ -81,6 +81,7 @@ if __name__ == "__main__":
     iterations = int(sys.argv[index+1])
 
     for i in range(iterations):
+        print("\n\n"+"TEST #"+str(i+1)+"\n")
         total_latency += tracerouteAnalysis()
     
     index_d = sys.argv.index("-d")
