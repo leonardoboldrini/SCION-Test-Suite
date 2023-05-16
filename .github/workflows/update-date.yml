@@ -17,15 +17,12 @@ jobs:
           git fetch
           status=$(git status -uno -s)
           echo "$status"
-          if [[ -n $status ]]; then
-            current_date=$(date +%B' '%d', '%Y)
-            sed -i "s/{{DATE}}/$current_date/" README.md
-            git config --global user.name 'GitHub Actions'
-            git config --global user.email 'actions@github.com'
-            git add README.md
-            git commit -m "Update date [skip ci]"
-            git push
-          else
-            echo "Repository is up to date. Skipping action."
-            exit 0
-          fi
+          git diff
+          current_date=$(date +%B' '%d', '%Y)
+          sed -i "s/{{DATE}}/$current_date/" README.md
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add README.md
+          git commit -m "Update date [skip ci]"
+          git push
+
