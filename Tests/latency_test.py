@@ -54,6 +54,7 @@ def tracerouteAnalysis():
         if line_list[0].isdigit(): #and '*' not in line_list[-3:]:
             for line in line_list[-3:]:
                 if '*' not in line:
+                    print("Entered")
                     num_samples += 1
                     avg_latency += float(re.sub(r"[^\d.]", '', line))
             if num_samples > 0:
