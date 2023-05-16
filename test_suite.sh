@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash#
 # This script runs the three Python scripts in the test suite
 # Store the arguments passed to the shell script
 
