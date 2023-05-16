@@ -20,18 +20,20 @@ for arg in "$args"; do
         echo "- <iterations>: The number of iterations for which each script needs to be run (as an integer)"        
 
         exit 0
+    else
+        # Check if the second argument is empty
+        if [ -z "$2" ]; then
+            echo "Running latency test with no path..."
+            python3 Tests/latency_test.py -d "$domain_name" -n "$iterations"
+            exit 1
+        else 
+            path=$2
+            python3 Tests/latency_test.py -d "$domain_name" -i "$path" -n "$iterations"
+        fi
     fi
 done
 
-# Check if the second argument is empty
-if [ -z "$2" ]; then
-    echo "Running latency test with no path..."
-    python3 Tests/latency_test.py -d "$domain_name" -n "$iterations"
-    exit 1
-else 
-    path=$2
-    python3 Tests/latency_test.py -d "$domain_name" -i "$path" -n "$iterations"
-fi
+
 
 
 # # Add commands to run each Python script, passing the stored arguments
