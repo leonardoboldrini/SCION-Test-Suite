@@ -16,6 +16,7 @@ jobs:
         run: |
           git fetch
           status=$(git status -uno -s)
+          echo "$status"
           if [[ -n $status ]]; then
             current_date=$(date +%B' '%d', '%Y)
             sed -i "s/{{DATE}}/$current_date/" README.md
