@@ -4,7 +4,7 @@ This repository provides a python script suite to test 3 SCION's features:
   - Bandwidth
   - Loss
 
-Tests will be run over a specified path to bettere understand how much reliable is, according the information provided by SCION.
+Tests will be run over a specified path to better understand how much reliable is, according the information provided by SCION.
 More in detail, this suite can work only under SCION-Lab (at this moment, at least) since it will interact with _"scion"_ commands like:
 
     scion traceroute
