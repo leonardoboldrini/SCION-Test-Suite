@@ -2,7 +2,7 @@ import subprocess # serve per lanciare thread
 import sys # serve per accedere ad argv
 import re
 
-def tracerouteAnalysis():
+def traceroute_analysis():
     # execute traceroute
     if len(sys.argv) < 2:
         print("Usage: python3 traceroute-script.py -d <domain> or python3 traceroute-script.py -i <desired_path> -d <domain>")
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     for i in range(iterations):
         print("\n\n"+"TEST #"+str(i+1)+"\n")
-        total_latency += tracerouteAnalysis()
+        total_latency += traceroute_analysis()
     
     index_d = sys.argv.index("-d")
     if "-i" in sys.argv:
