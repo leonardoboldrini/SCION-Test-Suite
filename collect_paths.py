@@ -100,7 +100,7 @@ if __name__ == "__main__":
     db = client['scionStatsDB']
     available_servers = db['availableServers'].find()
     paths_to_be_inserted = []
-    
+
     for server in available_servers:
-        paths_to_be_inserted = path_info_building(server, paths_to_be_inserted)
+        paths_to_be_inserted = path_info_building(server)
         insert_paths(paths_to_be_inserted)
