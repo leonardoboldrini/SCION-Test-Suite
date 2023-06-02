@@ -1,5 +1,4 @@
 import subprocess # serve per lanciare thread
-import sys # serve per accedere ad argv
 import re
 from pymongo import MongoClient
 
@@ -30,7 +29,7 @@ def path_info_building(server):
     source_addr = source_addr.decode('utf-8').rstrip()
 
     #execute scion showpaths command
-    cmd = f"scion showpaths {server} --extended"
+    cmd = f"scion showpaths {server['source_address']} --extended"
 
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
