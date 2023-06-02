@@ -72,7 +72,7 @@ def path_info_building(server):
             "MTU": path["MTU"],
             "expected_min_latency": path["Latency"],
             "active": path["Status"],
-            "destination_address": server.source_address,
+            "destination_address": server["source_address"],
             "source_address": source_addr,
         }
 
