@@ -64,7 +64,7 @@ def path_info_building(server):
     # Now I need to change the format of the hops field
     for path in dirty_path_info:
         old_hop_field = path["Hops"]
-        new_hop_field = convert_hop_predicates(old_hop_field)
+        new_hop_field = convert_hop_predicates(old_hop_field.split(" "))
 
         new_path = {
             "_id": path["Path_ID"],
