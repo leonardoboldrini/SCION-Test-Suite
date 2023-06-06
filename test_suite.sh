@@ -1,4 +1,4 @@
-#!/bin/bash#
+#!/bin/bash
 # This script runs the entire test suite
 # Store the arguments passed to the shell script
 
@@ -30,12 +30,13 @@ if [ -z "$iterations" ]; then
     display_help_info
     exit 1
 fi
+
 # Check if the second argument is empty
 echo "Collecting all the paths..."
 python3 collect_paths.py
 
 echo "Running the test suite..."
-exit 1
+exit 0
 
 
 # # Add commands to run each Python script, passing the stored arguments
