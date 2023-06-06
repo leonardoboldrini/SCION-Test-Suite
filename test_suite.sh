@@ -11,7 +11,7 @@ display_help_info() {
     echo "Usage: ./test_suite.sh <iterations>"
     echo "Arguments:"
     echo "  -h, --help: Display help information"
-    echo ""
+    echo " --skip: Skip the path collection and run the test suite"
     echo "  <iterations>: Number of iterations to run the test suite"
 }
 
