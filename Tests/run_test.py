@@ -88,11 +88,11 @@ if __name__ == "__main__":
 
     # Access availableServers collection and paths collection
     available_servers = db['availableServers'].find()
-    paths = db['paths'].find(
+    paths = list(db['paths'].find(
         {
             "active": True
         }
-    )
+    ))
     paths_stats = []
 
     #for each server in availableServers
