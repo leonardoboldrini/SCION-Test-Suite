@@ -7,7 +7,7 @@ import datetime
 
 #function that runs traceroute to get the average latency for one run
 def traceroute_analysis(server_address, hop_predicates):
-    cmd = f"scion traceroute {server_address} --sequence {hop_predicates}"
+    cmd = f"scion traceroute {server_address} --sequence '{hop_predicates}'"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = []
@@ -17,17 +17,6 @@ def traceroute_analysis(server_address, hop_predicates):
         if not line:
             break
         stdout.append(line.decode().strip())
-
-    while True:
-        error_line = proc.stderr.readline()
-        if not error_line:
-            break
-        stderr.append(error_line.decode().strip())
-
-    if stderr:
-        print("Command execution error:")
-        print("\n".join(stderr))
-        return  # Return or handle the error condition appropriately
 
     last_line = stdout[-1]
     num_samples = 0
