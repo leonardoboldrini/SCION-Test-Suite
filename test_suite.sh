@@ -34,14 +34,15 @@ else
         display_help_info
         exit 1
     fi
+    # Collect the paths
+    echo "Collecting all the paths..."
+    python3 collect_paths.py
+
+    echo "Running the test suite..."
+    exit 0
 fi
 
-# Check if the second argument is empty
-echo "Collecting all the paths..."
-python3 collect_paths.py
 
-echo "Running the test suite..."
-exit 0
 
 
 # # Add commands to run each Python script, passing the stored arguments
