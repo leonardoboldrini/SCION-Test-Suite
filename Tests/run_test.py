@@ -15,12 +15,12 @@ def traceroute_analysis(server_address, hop_predicates):
         line = proc.stdout.readline()
         if not line:
             break
-        stdout.append(line.decode().strip())
+        stdout.append(line.decode('utf-8').strip())
 
     last_line = stdout[-1]
     num_samples = 0
     avg_latency = 0
-    line_elements = last_line.decode('utf-8').rstrip().split(' ')
+    line_elements = last_line.split(' ')
 
     for line in line_elements[-3:]:
         if '*' not in line:
