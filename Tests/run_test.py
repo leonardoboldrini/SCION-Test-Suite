@@ -7,8 +7,7 @@ import datetime
 
 #function that runs traceroute to get the average latency for one run
 def traceroute_analysis(server_address, hop_predicates):
-    server_address_completed = server_address
-    cmd = f"scion traceroute {server_address_completed} --sequence {hop_predicates}"
+    cmd = f"scion traceroute {server_address} --sequence {hop_predicates}"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = proc.communicate()[0]
@@ -36,8 +35,7 @@ def traceroute_analysis(server_address, hop_predicates):
 
 #function that runs bwtestclient to get the average bandwidth for one run
 def bwtester_analysis(server_address, hop_predicates):
-    server_address_completed = server_address
-    cmd = f"scion-bwtestclient -s {server_address_completed} -cs 1,1400,?,1001Mbps -sequence {hop_predicates}" #TODO: choose proper bw and packet size
+    cmd = f"scion-bwtestclient -s {server_address} -cs 1,1400,?,1001Mbps -sequence {hop_predicates}" #TODO: choose proper bw and packet size
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = proc.communicate()[0]
@@ -61,6 +59,20 @@ def bwtester_analysis(server_address, hop_predicates):
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates): #TODO: write this function
+    cmd = f"scion ping {server_address} -c 1000 -sequence {hop_predicates}" #TODO: choose proper counter
+    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+
+    stdout = proc.communicate()[0]
+    last_line = stdout.splitlines()[-1]
+
+    if("Fatal: no path to " in last_line.decode('utf-8').rstrip()):
+        print("No path found")
+        return [0,0]
+
+    ll_elements = last_line.decode('utf-8').rstrip().split(' ')
+    
+    avg_loss = ll_elements[-5]
+
     return avg_loss
 
 if __name__ == "__main__":
@@ -97,14 +109,17 @@ if __name__ == "__main__":
                 #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
                 avg_loss = ping_analysis(server["source_address"], path["hop_predicates"])
 
+                timestamp = datetime.datetime.now()
+
                 new_path = {
-                    "_id": path["_id"],
+                    "_id": path["_id"] + "_" + str(timestamp),
                     "avg_latency": avg_latency,
                     "avg_bandwidth_cs": avg_bandwidth[0],
                     "avg_bandwidth_sc": avg_bandwidth[1],
                     "avg_loss": avg_loss,
-                    "timestamp": datetime.datetime.now(),
+                    "timestamp": timestamp,
                 }
 
                 paths_stats.append(new_path)
+        print(paths_stats)
         #insert in the paths_stats collection the results of the tests once for each available server
