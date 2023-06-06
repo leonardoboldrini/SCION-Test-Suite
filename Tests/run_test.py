@@ -11,24 +11,11 @@ def traceroute_analysis(server_address, hop_predicates):
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = []
-    stderr = []
     while True:
         line = proc.stdout.readline()
         if not line:
             break
         stdout.append(line.decode().strip())
-
-    while True:
-        line = proc.stderr.readline()
-        if not line:
-            break
-        stderr.append(line.decode().strip())
-
-    last_line = stderr[-1]
-
-    if("Error: fetching paths: no path available" in last_line.decode('utf-8').rstrip()):
-        print("No path found")
-        return "Not available"
 
     last_line = stdout[-1]
     num_samples = 0
@@ -58,25 +45,19 @@ def bwtester_analysis(server_address, hop_predicates):
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = []
-    stderr = []
     while True:
         line = proc.stdout.readline()
         if not line:
             break
         stdout.append(line.decode().strip())
 
-    while True:
-        line = proc.stderr.readline()
-        if not line:
-            break
-        stderr.append(line.decode().strip())
+    last_line = stdout[-1]
 
-    last_line = stderr[-1]
     if("Fatal: no path to " in last_line.decode('utf-8').rstrip()):
         print("No path found")
         return [0,0]
 
-    last_line = stdout[-1]
+    
     client_server_bw_line = stdout.splitlines()[-3]
     server_client_bw_line = stdout.splitlines()[8]
     
