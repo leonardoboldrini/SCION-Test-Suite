@@ -11,6 +11,7 @@ display_help_info() {
     echo "Usage: ./test_suite.sh <iterations>"
     echo "Arguments:"
     echo "  -h, --help: Display help information"
+    echo ""
     echo "  <iterations>: Number of iterations to run the test suite"
 }
 
@@ -34,6 +35,17 @@ else
         display_help_info
         exit 1
     fi
+
+    for arg in $args; do
+        # Check if the argument is '-help'
+        if [[ "$arg" == "--skip"]; then
+            # echo "Skipping the path collection..."
+            echo "Running the test suite..."
+            python3 Tests/run_test.py -n 1
+            exit 0
+        fi
+    done  
+
     # Collect the paths
     echo "Collecting all the paths..."
     python3 collect_paths.py

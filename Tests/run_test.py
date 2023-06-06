@@ -10,7 +10,7 @@ def traceroute_analysis(server_address, hop_predicates):
     cmd = f"scion traceroute {server_address} --sequence {hop_predicates}"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    stdout = proc.communicate()[0]
+    stdout = proc.communicate(timeout=5)[0]
     last_line = stdout.splitlines()[-1]
     num_samples = 0
     avg_latency = 0
@@ -38,7 +38,7 @@ def bwtester_analysis(server_address, hop_predicates):
     cmd = f"scion-bwtestclient -s {server_address} -cs 30,64,?,150Mbps -sequence {hop_predicates}" #TODO: choose proper bw and packet size
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    stdout = proc.communicate()[0]
+    stdout = proc.communicate(timeout=5)[0]
     last_line = stdout.splitlines()[-1]
 
     if("Fatal: no path to " in last_line.decode('utf-8').rstrip()):
@@ -59,10 +59,10 @@ def bwtester_analysis(server_address, hop_predicates):
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
-    cmd = f"scion ping {server_address} --timeout 30 -sequence {hop_predicates}"
+    cmd = f"scion ping {server_address} -c 30 -sequence {hop_predicates}"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    stdout = proc.communicate()[0]
+    stdout = proc.communicate(timeout=5)[0]
     last_line = stdout.splitlines()[-1]
 
     if("Fatal: no path to " in last_line.decode('utf-8').rstrip()):
