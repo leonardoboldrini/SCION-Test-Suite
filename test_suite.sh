@@ -42,12 +42,3 @@ else
     python3 Tests/run_test.py -n 1
     exit 0
 fi
-
-
-
-
-# # Add commands to run each Python script, passing the stored arguments
-# python bw_test.py $args
-# python loss_test.py $args
-
-#let's see
