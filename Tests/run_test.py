@@ -106,7 +106,7 @@ if __name__ == "__main__":
         #for each path in paths where path.destination_address == server.source_address
         for path in paths:
             if(path["destination_address"] == server["source_address"]):
-                print(path["hop_predicates"])                
+                print(server["source_address"] + " --- " + path["hop_predicates"])                
                 #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
                 avg_latency = traceroute_analysis(server["source_address"], path["hop_predicates"])
 
