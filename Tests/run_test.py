@@ -10,8 +10,14 @@ def traceroute_analysis(server_address, hop_predicates):
     cmd = f"scion traceroute {server_address} --sequence {hop_predicates}"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    stdout = proc.communicate(timeout=5)[0]
-    last_line = stdout.splitlines()[-1]
+    stdout = []
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        stdout.append(line.decode().strip())
+
+    last_line = stdout[-1]
     num_samples = 0
     avg_latency = 0
     line_elements = last_line.decode('utf-8').rstrip().split(' ')
