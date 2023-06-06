@@ -18,6 +18,18 @@ def traceroute_analysis(server_address, hop_predicates):
             break
         stdout.append(line.decode().strip())
 
+    while True:
+        line = proc.stderr.readline()
+        if not line:
+            break
+        stderr.append(line.decode().strip())
+
+    last_line = stderr[-1]
+
+    if("Error: fetching paths: no path available" in last_line.decode('utf-8').rstrip()):
+        print("No path found")
+        return "Not available"
+
     last_line = stdout[-1]
     num_samples = 0
     avg_latency = 0
@@ -42,17 +54,29 @@ def traceroute_analysis(server_address, hop_predicates):
 
 #function that runs bwtestclient to get the average bandwidth for one run
 def bwtester_analysis(server_address, hop_predicates):
-    cmd = f"scion-bwtestclient -s {server_address} -cs 30,64,?,150Mbps -sequence {hop_predicates}" #TODO: choose proper bw and packet size
+    cmd = f"scion-bwtestclient -s {server_address} -cs 30,64,?,150Mbps -sequence '{hop_predicates}'" #TODO: choose proper bw and packet size
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    stdout = proc.communicate(timeout=5)[0]
-    last_line = stdout.splitlines()[-1]
+    stdout = []
+    stderr = []
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        stdout.append(line.decode().strip())
 
+    while True:
+        line = proc.stderr.readline()
+        if not line:
+            break
+        stderr.append(line.decode().strip())
+
+    last_line = stderr[-1]
     if("Fatal: no path to " in last_line.decode('utf-8').rstrip()):
         print("No path found")
         return [0,0]
 
-    
+    last_line = stdout[-1]
     client_server_bw_line = stdout.splitlines()[-3]
     server_client_bw_line = stdout.splitlines()[8]
     
@@ -66,15 +90,20 @@ def bwtester_analysis(server_address, hop_predicates):
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
-    cmd = f"scion ping {server_address} -c 30 -sequence {hop_predicates}"
+    cmd = f"scion ping {server_address} -c 30 -sequence '{hop_predicates}'"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = proc.communicate(timeout=5)[0]
     last_line = stdout.splitlines()[-1]
 
-    if("Fatal: no path to " in last_line.decode('utf-8').rstrip()):
-        print("No path found")
-        return [0,0]
+    stdout = []
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        stdout.append(line.decode().strip())
+
+    last_line = stdout[-1]
 
     ll_elements = last_line.decode('utf-8').rstrip().split(' ')
     
