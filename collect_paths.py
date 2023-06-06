@@ -67,7 +67,7 @@ def path_info_building(server):
         new_hop_field = convert_hop_predicates(old_hop_field.split(" "))
 
         new_path = {
-            "_id": path["Path_ID"],
+            "_id": server['_id']+ "_" + path["Path_ID"],
             "hop_predicates": new_hop_field,
             "MTU": path["MTU"],
             "expected_min_latency": path["Latency"],
