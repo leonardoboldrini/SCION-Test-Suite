@@ -37,6 +37,8 @@ def traceroute_analysis(server_address, hop_predicates):
     else:
         print("No samples found")
         avg_latency = 0
+
+    print(avg_latency)
     return avg_latency
 
 #function that runs bwtestclient to get the average bandwidth for one run
