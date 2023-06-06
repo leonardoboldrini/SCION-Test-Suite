@@ -17,7 +17,7 @@ display_help_info() {
 
 # Iterate through the arguments
 for arg in $args; do
-    # Check if the argument is '-help'
+    # Check if the argument is '--help'
     if [[ "$arg" == "--help" || "$arg" == "-h" ]]; then
         # Display help information
         display_help_info
@@ -37,9 +37,9 @@ else
     fi
 
     for arg in $args; do
-        # Check if the argument is '-help'
-        if [[ "$arg" == "--skip" ]; then
-            # echo "Skipping the path collection..."
+        # Check if the argument is '--skip'
+        if [[ "$arg" == "--skip" ]]; then
+            echo "Skipping the path collection..."
             echo "Running the test suite..."
             python3 Tests/run_test.py -n 1
             exit 0
