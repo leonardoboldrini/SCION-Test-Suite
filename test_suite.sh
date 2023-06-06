@@ -24,11 +24,16 @@ for arg in $args; do
     fi
 done
 
-if [ -z "$iterations" ]; then
-    echo "Please provide the iterations number as an argument."
-    # Display help information
+if ! [[ $1 =~ ^[0-9]+$ ]]; then
+    echo "Invalid iterations argument. Argument is not a digit."
     display_help_info
-    exit 1
+else
+    if [ -z "$iterations" ]; then
+        echo "Please provide the iterations number as an argument."
+        # Display help information
+        display_help_info
+        exit 1
+    fi
 fi
 
 # Check if the second argument is empty
