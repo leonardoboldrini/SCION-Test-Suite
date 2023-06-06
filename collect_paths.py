@@ -1,6 +1,6 @@
 import subprocess # serve per lanciare thread
 import re
-from pymongo import MongoClient
+from pymongo import InsertOne, DeleteOne, UpdateOne, MongoClient
 
 def convert_hop_predicates(old_hop_predicates):
     new_hop_predicates = ""
@@ -28,8 +28,10 @@ def path_info_building(server):
     source_addr = scion_addr_proc.stdout.readline()
     source_addr = source_addr.decode('utf-8').rstrip()
 
+    server_destination_address_sp = server["source_address"].split(",")[0]
+    
     #execute scion showpaths command
-    cmd = f"scion showpaths {server['source_address']} --extended"
+    cmd = f"scion showpaths {server_destination_address_sp} --extended"
 
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
@@ -80,16 +82,39 @@ def path_info_building(server):
 
     return paths_to_be_inserted
     
-def insert_paths(paths_to_be_inserted):
+def insert_paths(db, paths_to_be_in_db):
     # Access the desired collection
     paths = db['paths']
-    # Insert the paths
-    for path in paths_to_be_inserted:
-        paths.update_one(
-            {"_id": path["_id"]},
-            {"$set": path},
-            upsert=True
+    # Get the list of existing path IDs
+    existing_path_ids = [path["_id"] for path in paths.find({}, {"_id": 1})]
+    # Prepare the bulk operations for insertion, update, and deletion
+    bulk_operations = []
+
+    for path in paths_to_be_in_db:
+        if path["_id"] in existing_path_ids:
+            # Update operation
+            bulk_operations.append(
+                UpdateOne(
+                    {"_id": path["_id"]},
+                    {"$set": path}
+                )
+            )
+        else:
+            # Insert operation
+            bulk_operations.append(
+                InsertOne(path)
+            )
+
+    # Find paths to be removed
+    paths_to_be_removed = paths.find({"_id": {"$nin": existing_path_ids}})
+    for path in paths_to_be_removed:
+        bulk_operations.append(
+            DeleteOne({"_id": path["_id"]})
         )
+
+    # Execute bulk operations
+    if bulk_operations:
+        paths.bulk_write(bulk_operations)
 
 if __name__ == "__main__":
     # Create a MongoClient object
@@ -102,4 +127,4 @@ if __name__ == "__main__":
 
     for server in available_servers:
         paths_to_be_inserted = path_info_building(server)
-        insert_paths(paths_to_be_inserted)
+        insert_paths(db, paths_to_be_inserted)
