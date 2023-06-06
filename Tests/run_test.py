@@ -35,7 +35,7 @@ def traceroute_analysis(server_address, hop_predicates):
 
 #function that runs bwtestclient to get the average bandwidth for one run
 def bwtester_analysis(server_address, hop_predicates):
-    cmd = f"scion-bwtestclient -s {server_address} -cs 1,1400,?,1001Mbps -sequence {hop_predicates}" #TODO: choose proper bw and packet size
+    cmd = f"scion-bwtestclient -s {server_address} -cs 30,64,?,150Mbps -sequence {hop_predicates}" #TODO: choose proper bw and packet size
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = proc.communicate()[0]
@@ -58,8 +58,8 @@ def bwtester_analysis(server_address, hop_predicates):
     return [cs_bw, sc_bw]
 
 #function that runs ping to get the average loss for one run
-def ping_analysis(server_address, hop_predicates): #TODO: write this function
-    cmd = f"scion ping {server_address} -c 1000 -sequence {hop_predicates}" #TODO: choose proper counter
+def ping_analysis(server_address, hop_predicates):
+    cmd = f"scion ping {server_address} --timeout 30 -sequence {hop_predicates}"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = proc.communicate()[0]
@@ -119,7 +119,7 @@ if __name__ == "__main__":
                     "avg_loss": avg_loss,
                     "timestamp": timestamp,
                 }
-
+                print(new_path)
                 paths_stats.append(new_path)
         print(paths_stats)
         #insert in the paths_stats collection the results of the tests once for each available server
