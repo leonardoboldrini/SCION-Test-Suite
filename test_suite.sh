@@ -39,6 +39,7 @@ else
     python3 collect_paths.py
 
     echo "Running the test suite..."
+    python3 Tests/run_test.py -n 1
     exit 0
 fi
 
