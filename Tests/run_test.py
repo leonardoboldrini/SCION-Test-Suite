@@ -17,7 +17,7 @@ def traceroute_analysis(server_address, hop_predicates):
             break
         stdout.append(line.decode('utf-8').strip())
 
-    last_line = stdout[-1]
+    last_line = stdout[-1] #TODO: error handling if no path found
     num_samples = 0
     avg_latency = 0
     line_elements = last_line.split(' ')
@@ -38,7 +38,7 @@ def traceroute_analysis(server_address, hop_predicates):
         print("No samples found")
         avg_latency = 0
 
-    print(avg_latency)
+    print(avg_latency) #TODO: remove this line and return avg_latency as a float
     return avg_latency
 
 #function that runs bwtestclient to get the average bandwidth for one run
@@ -51,15 +51,15 @@ def bwtester_analysis(server_address, hop_predicates):
         line = proc.stdout.readline()
         if not line:
             break
-        stdout.append(line.decode().strip())
+        stdout.append(line.decode('utf-8').strip()) #
 
     last_line = stdout[-1]
 
-    if("Fatal: no path to " in last_line.decode('utf-8').rstrip()):
+    if("Fatal: no path to " in last_line):
         print("No path found")
         return [0,0]
 
-    
+    #TODO: changes these lines 
     client_server_bw_line = stdout.splitlines()[-3]
     server_client_bw_line = stdout.splitlines()[8]
     
@@ -84,11 +84,11 @@ def ping_analysis(server_address, hop_predicates):
         line = proc.stdout.readline()
         if not line:
             break
-        stdout.append(line.decode().strip())
+        stdout.append(line.decode('utf-8').strip())
 
     last_line = stdout[-1]
 
-    ll_elements = last_line.decode('utf-8').rstrip().split(' ')
+    ll_elements = last_line.split(' ')
     
     avg_loss = ll_elements[-5]
 
