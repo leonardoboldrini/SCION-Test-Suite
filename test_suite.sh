@@ -1,37 +1,41 @@
 #!/bin/bash#
-# This script runs the three Python scripts in the test suite
+# This script runs the entire test suite
 # Store the arguments passed to the shell script
 
-# Usage: ./test_suite.sh <domain_name> [path] <iterations>
+# Usage: ./test_suite.sh <iterations>
+iterations=$1
 args="$@"
-domain_name=$1
-iterations=$3
-args="$@"
+
+display_help_info() {
+    echo "Help information:"
+    echo "Usage: ./test_suite.sh <iterations>"
+    echo "Arguments:"
+    echo "  -h, --help: Display help information"
+    echo "  <iterations>: Number of iterations to run the test suite"
+}
 
 # Iterate through the arguments
 for arg in $args; do
     # Check if the argument is '-help'
     if [[ "$arg" == "--help" || "$arg" == "-h" ]]; then
         # Display help information
-        echo "Help information:"
-        echo "Usage: ./test_suite.sh <domain_name> [path] <iterations>"
-        echo "- <domain_name>: The domain name of the AS to test (e.g. 17-ffaa:1:1063)"
-        echo "- [path]: The pre-selected path to enter in interactive mode (it is an integer). This is optional."
-        echo "- <iterations>: The number of iterations for which each script needs to be run (as an integer)"        
-
+        display_help_info
         exit 0
     fi
 done
 
-# Check if the second argument is empty
-if [ -z "$2" ]; then
-    echo "Running latency test with no path..."
-    python3 Tests/latency_test.py -d "$domain_name" -n "$iterations"
+if [ -z "$iterations" ]; then
+    echo "Please provide the iterations number as an argument."
+    # Display help information
+    display_help_info
     exit 1
-else 
-    path=$2
-    python3 Tests/latency_test.py -d "$domain_name" -i "$path" -n "$iterations"
 fi
+# Check if the second argument is empty
+echo "Collecting all the paths..."
+python3 collect_paths.py
+
+echo "Running the test suite..."
+exit 1
 
 
 # # Add commands to run each Python script, passing the stored arguments
