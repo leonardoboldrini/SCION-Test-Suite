@@ -10,90 +10,102 @@ def traceroute_analysis(server_address, hop_predicates):
     cmd = f"scion traceroute {server_address} --sequence '{hop_predicates}'"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    stdout = []
-    while True:
-        line = proc.stdout.readline()
-        if not line:
-            break
-        stdout.append(line.decode('utf-8').strip())
+    try:
+        stdout = []
+        while True:
+            line = proc.stdout.readline()
+            if not line:
+                break
+            stdout.append(line.decode('utf-8').strip())
 
-    if(len(stdout) < 2):
-        print("Measurement failed")
-        return ["Information not available"]
+        if(len(stdout) < 2):
+            print("Measurement failed")
+            return ["Information not available"]
 
-    last_line = stdout[-1]
-    num_samples = 0
-    avg_latency = 0
-    line_elements = last_line.split(' ')
-
-    for line in line_elements[-3:]:
-        if '*' not in line:
-            num_samples += 1
-            if "ns" in line:
-                avg_latency += float(re.sub(r"[^\d.]", '', line))/1000000
-            elif "us" in line:
-                avg_latency += float(re.sub(r"[^\d.]", '', line))/1000
-            else:
-                avg_latency += float(re.sub(r"[^\d.]",'',line))
-    if num_samples > 0:
-        #compute actual average
-        avg_latency /= num_samples
-    else:
-        print("No samples found")
+        last_line = stdout[-1]
+        num_samples = 0
         avg_latency = 0
+        line_elements = last_line.split(' ')
 
-    return avg_latency
+        for line in line_elements[-3:]:
+            if '*' not in line:
+                num_samples += 1
+                if "ns" in line:
+                    avg_latency += float(re.sub(r"[^\d.]", '', line))/1000000
+                elif "us" in line:
+                    avg_latency += float(re.sub(r"[^\d.]", '', line))/1000
+                else:
+                    avg_latency += float(re.sub(r"[^\d.]",'',line))
+        if num_samples > 0:
+            #compute actual average
+            avg_latency /= num_samples
+        else:
+            print("No samples found")
+            avg_latency = 0
+
+        return avg_latency
+    except Exception as e:
+        print(f"Error in traceroute_analysis: {str(e)}")
+        return "Information not available"
+    
 
 #function that runs bwtestclient to get the average bandwidth for one run
 def bwtester_analysis(server_address, hop_predicates, packet_size):
     cmd = f"scion-bwtestclient -s {server_address} -cs 3,{packet_size},?,150Mbps -sequence '{hop_predicates}'" #TODO: choose proper bw and packet size
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    try:
+        stdout = []
+        while True:
+            line = proc.stdout.readline()
+            if not line:
+                break
+            stdout.append(line.decode('utf-8').strip()) #
 
-    stdout = []
-    while True:
-        line = proc.stdout.readline()
-        if not line:
-            break
-        stdout.append(line.decode('utf-8').strip()) #
+        if(len(stdout) < 2):
+            print("Measurement failed")
+            return ["Information not available", "Information not available"]
 
-    if(len(stdout) < 2):
-        print("Measurement failed")
+        client_server_bw_line = stdout[-3]
+        server_client_bw_line = stdout[8]
+        
+        cs_line_elements = client_server_bw_line.split(' ')
+        sc_line_elements = server_client_bw_line.split(' ')
+        
+        cs_bw = cs_line_elements[-2] + cs_line_elements[-1]
+        sc_bw = sc_line_elements[-2] + sc_line_elements[-1]
+
+        return [cs_bw, sc_bw]
+    except Exception as e:
+        print(f"Error in bwtester_analysis: {str(e)}")
         return "Information not available"
-
-    client_server_bw_line = stdout[-3]
-    server_client_bw_line = stdout[8]
-    
-    cs_line_elements = client_server_bw_line.split(' ')
-    sc_line_elements = server_client_bw_line.split(' ')
-    
-    cs_bw = cs_line_elements[-2] + cs_line_elements[-1]
-    sc_bw = sc_line_elements[-2] + sc_line_elements[-1]
-
-    return [cs_bw, sc_bw]
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
     cmd = f"scion ping {server_address} -c 30 --sequence '{hop_predicates}'"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    stdout = []
-    while True:
-        line = proc.stdout.readline()
-        if not line:
-            break
-        stdout.append(line.decode('utf-8').strip())
+    try:
+        stdout = []
+        while True:
+            line = proc.stdout.readline()
+            if not line:
+                break
+            stdout.append(line.decode('utf-8').strip())
 
-    if(len(stdout) < 2):
-        print("Measurement failed")
+        if(len(stdout) < 2):
+            print("Measurement failed")
+            return "Information not available"
+
+        last_line = stdout[-1]
+
+        ll_elements = last_line.split(' ')
+
+        avg_loss = ll_elements[-5]
+
+        return avg_loss
+    except Exception as e:
+        print(f"Error in ping_analysis: {str(e)}")
         return "Information not available"
-
-    last_line = stdout[-1]
-
-    ll_elements = last_line.split(' ')
-    
-    avg_loss = ll_elements[-5]
-
-    return avg_loss
 
 def insert_paths_stats(db, paths_stats):
     # Access the desired collection
