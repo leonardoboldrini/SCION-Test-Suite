@@ -149,34 +149,38 @@ if __name__ == "__main__":
             for path in paths:
                 if(path["destination_address"] == server["source_address"]):
                     print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
-                    #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
-                    avg_latency = traceroute_analysis(server["source_address"], path["hop_predicates"])
-                    if avg_latency != "Information not available":
-                        avg_latency = str(avg_latency)+"ms"
-                    #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with minimum size packet
-                    avg_bandwidth_small_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(64))
-                    
-                    #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with maximum size packet
-                    avg_bandwidth_big_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(path["MTU"]))
+                    try:
+                        #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
+                        avg_latency = traceroute_analysis(server["source_address"], path["hop_predicates"])
+                        if avg_latency != "Information not available":
+                            avg_latency = str(avg_latency)+"ms"
+                        #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with minimum size packet
+                        avg_bandwidth_small_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(64))
+                        
+                        #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with maximum size packet
+                        avg_bandwidth_big_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(path["MTU"]))
 
-                    #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
-                    avg_loss = ping_analysis(server["source_address"], path["hop_predicates"])
+                        #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
+                        avg_loss = ping_analysis(server["source_address"], path["hop_predicates"])
 
-                    timestamp = datetime.datetime.now()
+                        timestamp = datetime.datetime.now()
 
-                    new_path = {
-                        "_id": path["_id"] + "_" + str(timestamp),
-                        "avg_latency": avg_latency,
-                        "avg_bandwidth_cs_64": avg_bandwidth_small_packet[0],
-                        "avg_bandwidth_sc_64": avg_bandwidth_small_packet[1],
-                        "avg_bandwidth_cs_MTU": avg_bandwidth_big_packet[0],
-                        "avg_bandwidth_sc_MTU": avg_bandwidth_big_packet[1],
-                        "avg_loss": avg_loss,
-                        "timestamp": timestamp,
-                    }
+                        new_path = {
+                            "_id": path["_id"] + "_" + str(timestamp),
+                            "avg_latency": avg_latency,
+                            "avg_bandwidth_cs_64": avg_bandwidth_small_packet[0],
+                            "avg_bandwidth_sc_64": avg_bandwidth_small_packet[1],
+                            "avg_bandwidth_cs_MTU": avg_bandwidth_big_packet[0],
+                            "avg_bandwidth_sc_MTU": avg_bandwidth_big_packet[1],
+                            "avg_loss": avg_loss,
+                            "timestamp": timestamp,
+                        }
 
-                    print(new_path)
-                    paths_stats.append(new_path)
+                        print(new_path)
+                        paths_stats.append(new_path)
+                    except Exception as e:
+                        print(f"Error in measuring path: {str(e)}")
+                        continue
             insert_paths_stats(db, paths_stats)
             paths_stats = []
             if fast_mode and destination_reached >= 1:
