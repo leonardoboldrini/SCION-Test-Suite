@@ -77,7 +77,7 @@ def bwtester_analysis(server_address, hop_predicates, packet_size):
         return [cs_bw, sc_bw]
     except Exception as e:
         print(f"Error in bwtester_analysis: {str(e)}")
-        return "Information not available"
+        return ["Information not available", "Information not available"]
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
