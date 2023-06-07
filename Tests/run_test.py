@@ -46,7 +46,7 @@ def traceroute_analysis(server_address, hop_predicates):
 
 #function that runs bwtestclient to get the average bandwidth for one run
 def bwtester_analysis(server_address, hop_predicates, packet_size):
-    cmd = f"scion-bwtestclient -s {server_address} -cs 30,{packet_size},?,150Mbps -sequence '{hop_predicates}'" #TODO: choose proper bw and packet size
+    cmd = f"scion-bwtestclient -s {server_address} -cs 3,{packet_size},?,150Mbps -sequence '{hop_predicates}'" #TODO: choose proper bw and packet size
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = []
@@ -73,7 +73,7 @@ def bwtester_analysis(server_address, hop_predicates, packet_size):
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
-    cmd = f"scion ping {server_address} -c 30 --sequence '{hop_predicates}'"
+    cmd = f"scion ping {server_address} -c 3 --sequence '{hop_predicates}'"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = []
@@ -131,6 +131,7 @@ if __name__ == "__main__":
     paths_analyzed = 0
     #for each server in availableServers
     for server in available_servers:
+        paths_analyzed = 0
         #for each path in paths where path.destination_address == server.source_address
         for path in paths:
             if(path["destination_address"] == server["source_address"]):
