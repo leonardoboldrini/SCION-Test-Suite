@@ -72,7 +72,7 @@ def bwtester_analysis(server_address, hop_predicates):
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
-    cmd = f"scion ping {server_address} -c 30 -sequence '{hop_predicates}'"
+    cmd = f"scion ping {server_address} -c 30 --sequence '{hop_predicates}'"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = []
