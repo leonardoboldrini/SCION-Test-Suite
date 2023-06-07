@@ -17,7 +17,11 @@ def traceroute_analysis(server_address, hop_predicates):
             break
         stdout.append(line.decode('utf-8').strip())
 
-    last_line = stdout[-1] #TODO: error handling if no path found
+    if(len(stdout) < 2):
+        print("Measurement failed")
+        return ["Information not available"]
+
+    last_line = stdout[-1]
     num_samples = 0
     avg_latency = 0
     line_elements = last_line.split(' ')
@@ -41,8 +45,8 @@ def traceroute_analysis(server_address, hop_predicates):
     return avg_latency
 
 #function that runs bwtestclient to get the average bandwidth for one run
-def bwtester_analysis(server_address, hop_predicates):
-    cmd = f"scion-bwtestclient -s {server_address} -cs 30,64,?,150Mbps -sequence '{hop_predicates}'" #TODO: choose proper bw and packet size
+def bwtester_analysis(server_address, hop_predicates, packet_size):
+    cmd = f"scion-bwtestclient -s {server_address} -cs 30,{packet_size},?,150Mbps -sequence '{hop_predicates}'" #TODO: choose proper bw and packet size
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = []
@@ -52,13 +56,10 @@ def bwtester_analysis(server_address, hop_predicates):
             break
         stdout.append(line.decode('utf-8').strip()) #
 
-    last_line = stdout[-1]
+    if(len(stdout) < 2):
+        print("Measurement failed")
+        return "Information not available"
 
-    if("Fatal: no path to " in last_line):
-        print("No path found")
-        return [0,0]
-
-    #TODO: changes these lines 
     client_server_bw_line = stdout[-3]
     server_client_bw_line = stdout[8]
     
@@ -81,6 +82,10 @@ def ping_analysis(server_address, hop_predicates):
         if not line:
             break
         stdout.append(line.decode('utf-8').strip())
+
+    if(len(stdout) < 2):
+        print("Measurement failed")
+        return "Information not available"
 
     last_line = stdout[-1]
 
@@ -115,29 +120,35 @@ if __name__ == "__main__":
         #for each path in paths where path.destination_address == server.source_address
         for path in paths:
             if(path["destination_address"] == server["source_address"]):
-                print(server["source_address"] + " --- " + path["hop_predicates"])                
-                #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
-                avg_latency = traceroute_analysis(server["source_address"], path["hop_predicates"])
-                print(str(avg_latency)+"ms")
-                
-                #run BWtester <server.src_address> --hop_predicates <path.hop_predicates>
-                avg_bandwidth = bwtester_analysis(server["source_address"], path["hop_predicates"])
-                str(avg_bandwidth[0])+" "+str(avg_bandwidth[1])
+                for i in range(iterations):
+                    print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
+                    #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
+                    avg_latency = traceroute_analysis(server["source_address"], path["hop_predicates"])
+                    if avg_latency != "Information not available":
+                        avg_latency = str(avg_latency)+"ms"
+                    #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with minimum size packet
+                    avg_bandwidth_small_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(64))
+                    
+                    #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with maximum size packet
+                    avg_bandwidth_big_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(path["MTU"]))
 
-                #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
-                avg_loss = ping_analysis(server["source_address"], path["hop_predicates"])
+                    #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
+                    avg_loss = ping_analysis(server["source_address"], path["hop_predicates"])
 
-                timestamp = datetime.datetime.now()
+                    timestamp = datetime.datetime.now()
 
-                new_path = {
-                    "_id": path["_id"] + "_" + str(timestamp),
-                    "avg_latency": str(avg_latency)+"ms",
-                    "avg_bandwidth_cs": avg_bandwidth[0],
-                    "avg_bandwidth_sc": avg_bandwidth[1],
-                    "avg_loss": avg_loss,
-                    "timestamp": timestamp,
-                }
-                print(new_path)
-                paths_stats.append(new_path)
+                    new_path = {
+                        "_id": path["_id"] + "_" + str(timestamp),
+                        "avg_latency": avg_latency,
+                        "avg_bandwidth_cs_64": avg_bandwidth_small_packet[0],
+                        "avg_bandwidth_sc_64": avg_bandwidth_small_packet[1],
+                        "avg_bandwidth_cs_MTU": avg_bandwidth_big_packet[0],
+                        "avg_bandwidth_sc_MTU": avg_bandwidth_big_packet[1],
+                        "avg_loss": avg_loss,
+                        "timestamp": timestamp,
+                    }
+
+                    print(new_path)
+                    paths_stats.append(new_path)
         print(paths_stats)
         #insert in the paths_stats collection the results of the tests once for each available server
