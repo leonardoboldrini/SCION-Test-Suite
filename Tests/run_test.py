@@ -73,7 +73,7 @@ def bwtester_analysis(server_address, hop_predicates, packet_size):
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
-    cmd = f"scion ping {server_address} -c 3 --sequence '{hop_predicates}'"
+    cmd = f"scion ping {server_address} -c 30 --sequence '{hop_predicates}'"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     stdout = []
@@ -128,14 +128,13 @@ if __name__ == "__main__":
     ))
     paths_stats = []
 
-    paths_analyzed = 0
+    destination_reached = 0
     #for each server in availableServers
     for server in available_servers:
-        paths_analyzed = 0
+        destination_reached += 1
         #for each path in paths where path.destination_address == server.source_address
         for path in paths:
             if(path["destination_address"] == server["source_address"]):
-                paths_analyzed += 1
                 for i in range(iterations):
                     print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
                     #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
@@ -168,5 +167,5 @@ if __name__ == "__main__":
                     paths_stats.append(new_path)
                 insert_paths_stats(db, paths_stats)
                 paths_stats = []
-            if fast_mode and paths_analyzed >= 2:
-                break
+        if fast_mode and destination_reached >= 1:
+            break
