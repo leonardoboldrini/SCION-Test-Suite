@@ -133,9 +133,9 @@ if __name__ == "__main__":
     for server in available_servers:
         destination_reached += 1
         #for each path in paths where path.destination_address == server.source_address
-        for path in paths:
-            if(path["destination_address"] == server["source_address"]):
-                for i in range(iterations):
+        for i in range(iterations):
+            for path in paths:
+                if(path["destination_address"] == server["source_address"]):
                     print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
                     #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
                     avg_latency = traceroute_analysis(server["source_address"], path["hop_predicates"])
@@ -167,5 +167,5 @@ if __name__ == "__main__":
                     paths_stats.append(new_path)
                 insert_paths_stats(db, paths_stats)
                 paths_stats = []
-        if fast_mode and destination_reached >= 1:
-            break
+            if fast_mode and destination_reached >= 1:
+                break
