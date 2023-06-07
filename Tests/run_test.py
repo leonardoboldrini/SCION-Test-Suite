@@ -38,7 +38,6 @@ def traceroute_analysis(server_address, hop_predicates):
         print("No samples found")
         avg_latency = 0
 
-    print(avg_latency) #TODO: remove this line and return avg_latency as a float
     return avg_latency
 
 #function that runs bwtestclient to get the average bandwidth for one run
@@ -75,9 +74,6 @@ def bwtester_analysis(server_address, hop_predicates):
 def ping_analysis(server_address, hop_predicates):
     cmd = f"scion ping {server_address} -c 30 -sequence '{hop_predicates}'"
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-
-    stdout = proc.communicate(timeout=5)[0]
-    last_line = stdout.splitlines()[-1]
 
     stdout = []
     while True:
@@ -122,9 +118,11 @@ if __name__ == "__main__":
                 print(server["source_address"] + " --- " + path["hop_predicates"])                
                 #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
                 avg_latency = traceroute_analysis(server["source_address"], path["hop_predicates"])
-
+                print(str(avg_latency)+"ms")
+                
                 #run BWtester <server.src_address> --hop_predicates <path.hop_predicates>
                 avg_bandwidth = bwtester_analysis(server["source_address"], path["hop_predicates"])
+                str(avg_bandwidth[0])+" "+str(avg_bandwidth[1])
 
                 #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
                 avg_loss = ping_analysis(server["source_address"], path["hop_predicates"])
