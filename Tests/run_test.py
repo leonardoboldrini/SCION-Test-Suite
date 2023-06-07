@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
                 new_path = {
                     "_id": path["_id"] + "_" + str(timestamp),
-                    "avg_latency": avg_latency,
+                    "avg_latency": str(avg_latency)+"ms",
                     "avg_bandwidth_cs": avg_bandwidth[0],
                     "avg_bandwidth_sc": avg_bandwidth[1],
                     "avg_loss": avg_loss,
