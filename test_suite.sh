@@ -41,7 +41,7 @@ else
         if [[ "$arg" == "--skip" ]]; then
             echo "Skipping the path collection..."
             echo "Running the test suite..."
-            python3 Tests/run_test.py -n 1
+            python3 Tests/run_test.py -n $1
             exit 0
         fi
     done  
@@ -51,6 +51,6 @@ else
     python3 collect_paths.py
 
     echo "Running the test suite..."
-    python3 Tests/run_test.py -n 1
+    python3 Tests/run_test.py -n $1
     exit 0
 fi
