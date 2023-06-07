@@ -60,11 +60,11 @@ def bwtester_analysis(server_address, hop_predicates):
         return [0,0]
 
     #TODO: changes these lines 
-    client_server_bw_line = stdout.splitlines()[-3]
-    server_client_bw_line = stdout.splitlines()[8]
+    client_server_bw_line = stdout[-3]
+    server_client_bw_line = stdout[8]
     
-    cs_line_elements = client_server_bw_line.decode('utf-8').rstrip().split(' ')
-    sc_line_elements = server_client_bw_line.decode('utf-8').rstrip().split(' ')
+    cs_line_elements = client_server_bw_line.split(' ')
+    sc_line_elements = server_client_bw_line.split(' ')
     
     cs_bw = cs_line_elements[-2] + cs_line_elements[-1]
     sc_bw = sc_line_elements[-2] + sc_line_elements[-1]
