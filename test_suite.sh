@@ -59,7 +59,7 @@ else
     echo "Collecting all the paths..."
     python3 collect_paths.py
 
-    for arg in $args: do
+    for arg in $args; do
         # Check if the argument is '--some_only'
         if [[ "$arg" == "--some_only" ]]; then
             echo "Running the test suite for maximum 2 paths for each destination..."
