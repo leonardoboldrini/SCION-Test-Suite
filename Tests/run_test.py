@@ -183,5 +183,5 @@ if __name__ == "__main__":
                         continue
             insert_paths_stats(db, paths_stats)
             paths_stats = []
-            if fast_mode and destination_reached >= 1:
-                break
+        if fast_mode and destination_reached >= 1:
+            break
