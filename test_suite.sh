@@ -41,7 +41,7 @@ else
         # Check if the argument is '--skip'
         if [[ "$arg" == "--skip" ]]; then
             echo "Skipping the path collection..."
-            for arg in $args: do
+            for arg in $args; do
                 # Check if the argument is '--some_only'
                 if [[ "$arg" == "--some_only" ]]; then
                     echo "Running the test suite for maximum 2 paths for each destination..."
@@ -67,7 +67,7 @@ else
             exit 0
         fi
     done
-    
+
     echo "Running the test suite..."
     python3 Tests/run_test.py -n $1
     exit 0
