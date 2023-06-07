@@ -108,6 +108,9 @@ def insert_paths_stats(db, paths_stats):
 if __name__ == "__main__":
     #get the number of iterations from arguments
     index = sys.argv.index("-n")
+
+    fast_mode = sys.argv.__contains__("--some_only")
+
     iterations = int(sys.argv[index+1])
 
     #access the DB and retrieve avialableServers and paths information
@@ -125,11 +128,13 @@ if __name__ == "__main__":
     ))
     paths_stats = []
 
+    paths_analyzed = 0
     #for each server in availableServers
     for server in available_servers:
         #for each path in paths where path.destination_address == server.source_address
         for path in paths:
             if(path["destination_address"] == server["source_address"]):
+                paths_analyzed += 1
                 for i in range(iterations):
                     print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
                     #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
@@ -162,3 +167,5 @@ if __name__ == "__main__":
                     paths_stats.append(new_path)
                 insert_paths_stats(db, paths_stats)
                 paths_stats = []
+            if fast_mode and paths_analyzed >= 2:
+                break
