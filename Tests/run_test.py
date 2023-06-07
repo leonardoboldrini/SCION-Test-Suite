@@ -95,6 +95,16 @@ def ping_analysis(server_address, hop_predicates):
 
     return avg_loss
 
+def insert_paths_stats(db, paths_stats):
+    # Access the desired collection
+    paths_stats_collection = db['paths_stats']
+
+    try:
+        if paths_stats:
+            paths_stats_collection.insert_many(paths_stats)
+    except Exception as e:
+        print(f"Error inserting paths stats: {str(e)}")
+
 if __name__ == "__main__":
     #get the number of iterations from arguments
     index = sys.argv.index("-n")
@@ -150,5 +160,5 @@ if __name__ == "__main__":
 
                     print(new_path)
                     paths_stats.append(new_path)
-        print(paths_stats)
-        #insert in the paths_stats collection the results of the tests once for each available server
+                insert_paths_stats(db, paths_stats)
+                paths_stats = []
