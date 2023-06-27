@@ -150,10 +150,7 @@ if __name__ == "__main__":
                 if(path["destination_address"] == server["source_address"]):
                     print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
                     try:
-                        #run traceroute <server.src_address> --hop_predicates <path.hop_predicates>
-                        avg_latency = traceroute_analysis(server["source_address"], path["hop_predicates"])
-                        if avg_latency != "Information not available":
-                            avg_latency = str(avg_latency)+"ms"
+
                         #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with minimum size packet
                         avg_bandwidth_small_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(64))
                         
@@ -161,8 +158,11 @@ if __name__ == "__main__":
                         avg_bandwidth_big_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(path["MTU"]))
 
                         #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
-                        avg_loss = ping_analysis(server["source_address"], path["hop_predicates"])
+                        avg_loss, avg_latency = ping_analysis(server["source_address"], path["hop_predicates"])
 
+                        if avg_latency != "Information not available":
+                            avg_latency = str(avg_latency)+"ms"
+                        
                         timestamp = datetime.datetime.now()
 
                         new_path = {
