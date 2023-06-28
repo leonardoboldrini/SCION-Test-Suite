@@ -96,13 +96,38 @@ def ping_analysis(server_address, hop_predicates):
             print("Measurement failed")
             return "Information not available"
 
+        latency_values = []
+        for line in stdout:
+            match = re.search(r"time=([\d.]+)(ms|us|ns)", line)
+            if match:
+                value = float(match.group(1))
+                unit = match.group(2)
+                
+                # Convert to a common unit (e.g., milliseconds)
+                if unit == "us":
+                    value /= 1000
+                elif unit == "ns":
+                    value /= 1000000
+                
+                latency_values.append(value)
+        avg_latency = 0
+        count = 0
+
+        for value in latency_values:
+            avg_latency += value
+            count += 1
+        
+        if count > 0:
+            avg_latency /= count
+
         last_line = stdout[-1]
 
         ll_elements = last_line.split(' ')
 
         avg_loss = ll_elements[-5]
 
-        return avg_loss
+        return avg_loss, avg_latency
+        
     except Exception as e:
         print(f"Error in ping_analysis: {str(e)}")
         return "Information not available"
@@ -125,7 +150,7 @@ if __name__ == "__main__":
 
     iterations = int(sys.argv[index+1])
 
-    #access the DB and retrieve avialableServers and paths information
+    #access the DB and retrieve availableServers and paths information
     client = MongoClient('mongodb://localhost:27017/')
     
     # Access the desired database
