@@ -49,7 +49,7 @@ def path_info_building(server):
     # Join the lines into a single string
     output_text = '\n'.join(output)
 
-    pattern = r"\[(\d+)\] Hops: \[([^]]+)\]\s+MTU: (\d+)\s+NextHop: ([^\s]+)\s+Expires: ([^\n]+)\s+Latency: ([^\n]+)\s+Status: ([^\n]+)\s+LocalIP: ([^\n]+)"
+    pattern = r"\[ ?(\d+)\] Hops: \[([^]]+)\]\s+MTU: (\d+)\s+NextHop: ([^\s]+)\s+Expires: ([^\n]+)\s+Latency: ([^\n]+)\s+Status: ([^\n]+)\s+LocalIP: ([^\n]+)"
     matches = re.findall(pattern, output_text)
     print(len(matches))
     #Almost good path info but I need to change the format of the hops field 
