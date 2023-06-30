@@ -220,11 +220,6 @@ if __name__ == "__main__":
                         print(f"Error in measuring path: {str(e)}")
                         continue
             insert_paths_stats(db, paths_stats)
-            paths = list(db['paths'].find(
-                {
-                    "active": True
-                }
-            ))
             paths_stats = []
             if fast_mode and destination_reached >= 1:
                 break
