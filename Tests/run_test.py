@@ -216,6 +216,7 @@ if __name__ == "__main__":
 
                         print(new_path)
                         paths_stats.append(new_path)
+                        insert_paths_stats(db, paths_stats)
                     except Exception as e:
                         print(f"Error in measuring path: {str(e)}")
                         continue
