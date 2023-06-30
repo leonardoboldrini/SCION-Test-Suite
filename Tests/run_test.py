@@ -156,7 +156,7 @@ if __name__ == "__main__":
     #get the number of iterations from arguments
     index = sys.argv.index("-n")
 
-    fast_mode = sys.argv.__contains__("--some_only")
+    fast_mode = ("--some_only" in sys.argv)
 
     iterations = int(sys.argv[index+1])
 
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     db = client['scionStatsDB']
 
     # Access availableServers collection and paths collection
-    available_servers = db['availableServers'].find()
+    available_servers = list(db['availableServers'].find())
     paths = list(db['paths'].find(
         {
             "active": True
@@ -179,48 +179,52 @@ if __name__ == "__main__":
     #for each server in availableServers
     for i in range(iterations):
         for server in available_servers:
-            if server['_id'] == 5 or server['_id'] == 6:
-                destination_reached += 1
-                #for each path in paths where path.destination_address == server.source_address
-                for path in paths:
-                    if(path["destination_address"] == server["source_address"]):
-                        print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
-                        try:
+            destination_reached += 1
+            #for each path in paths where path.destination_address == server.source_address
+            for path in paths:
+                if(path["destination_address"] == server["source_address"]):
+                    print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
+                    try:
 
-                            #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with minimum size packet
-                            avg_bandwidth_small_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(64))
-                            
-                            #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with maximum size packet
-                            avg_bandwidth_big_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(path["MTU"]))
+                        #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with minimum size packet
+                        avg_bandwidth_small_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(64))
+                        
+                        #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with maximum size packet
+                        avg_bandwidth_big_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(path["MTU"]))
 
-                            #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
-                            avg_loss, avg_latency = ping_analysis(server["source_address"], path["hop_predicates"])
+                        #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
+                        avg_loss, avg_latency = ping_analysis(server["source_address"], path["hop_predicates"])
 
-                            if avg_latency != "Information not available":
-                                avg_latency = str(avg_latency)+"ms"
-                            
-                            timestamp = datetime.datetime.now()
-                            isolated_domains = getISD(path["hop_predicates"])
+                        if avg_latency != "Information not available":
+                            avg_latency = str(avg_latency)+"ms"
+                        
+                        timestamp = datetime.datetime.now()
+                        isolated_domains = getISD(path["hop_predicates"])
 
-                            new_path = {
-                                "_id": path["_id"] + "_" + str(timestamp),
-                                "avg_latency": avg_latency,
-                                "avg_bandwidth_cs_64": avg_bandwidth_small_packet[0],
-                                "avg_bandwidth_sc_64": avg_bandwidth_small_packet[1],
-                                "avg_bandwidth_cs_MTU": avg_bandwidth_big_packet[0],
-                                "avg_bandwidth_sc_MTU": avg_bandwidth_big_packet[1],
-                                "hops": path["hop_predicates"],
-                                "isolated_domains": isolated_domains,
-                                "avg_loss": avg_loss,
-                                "timestamp": timestamp,
-                            }
+                        new_path = {
+                            "_id": path["_id"] + "_" + str(timestamp),
+                            "avg_latency": avg_latency,
+                            "avg_bandwidth_cs_64": avg_bandwidth_small_packet[0],
+                            "avg_bandwidth_sc_64": avg_bandwidth_small_packet[1],
+                            "avg_bandwidth_cs_MTU": avg_bandwidth_big_packet[0],
+                            "avg_bandwidth_sc_MTU": avg_bandwidth_big_packet[1],
+                            "hops": path["hop_predicates"],
+                            "isolated_domains": isolated_domains,
+                            "avg_loss": avg_loss,
+                            "timestamp": timestamp,
+                        }
 
-                            print(new_path)
-                            paths_stats.append(new_path)
-                        except Exception as e:
-                            print(f"Error in measuring path: {str(e)}")
-                            continue
-                insert_paths_stats(db, paths_stats)
-                paths_stats = []
-        if fast_mode and destination_reached >= 1:
-            break
+                        print(new_path)
+                        paths_stats.append(new_path)
+                    except Exception as e:
+                        print(f"Error in measuring path: {str(e)}")
+                        continue
+            insert_paths_stats(db, paths_stats)
+            paths = list(db['paths'].find(
+                {
+                    "active": True
+                }
+            ))
+            paths_stats = []
+            if fast_mode and destination_reached >= 1:
+                break
