@@ -91,6 +91,7 @@ def insert_paths(db, paths_to_be_in_db):
     bulk_operations = []
 
     for path in paths_to_be_in_db:
+        print(path)
         if path["_id"] in existing_path_ids:
             # Update operation
             bulk_operations.append(
