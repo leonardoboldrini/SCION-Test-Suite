@@ -31,7 +31,7 @@ def path_info_building(server):
     server_destination_address_sp = server["source_address"].split(",")[0]
     
     #execute scion showpaths command
-    cmd = f"scion showpaths {server_destination_address_sp} --extended"
+    cmd = f"scion showpaths {server_destination_address_sp} --extended -m 40"
 
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 

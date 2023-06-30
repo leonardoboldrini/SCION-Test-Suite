@@ -142,6 +142,16 @@ def insert_paths_stats(db, paths_stats):
     except Exception as e:
         print(f"Error inserting paths stats: {str(e)}")
 
+#function that gets the ISDs from the hop predicates
+def getISD(hop_predicates):
+    hops = hop_predicates.split(" ")
+    isds = []
+    for hop in hops:
+        if hop.split("-")[0] not in isds:
+            isds.append(hop.split("-")[0])
+    return isds
+
+
 if __name__ == "__main__":
     #get the number of iterations from arguments
     index = sys.argv.index("-n")
@@ -189,6 +199,7 @@ if __name__ == "__main__":
                             avg_latency = str(avg_latency)+"ms"
                         
                         timestamp = datetime.datetime.now()
+                        isolated_domains = getISD(path["hop_predicates"])
 
                         new_path = {
                             "_id": path["_id"] + "_" + str(timestamp),
@@ -197,6 +208,8 @@ if __name__ == "__main__":
                             "avg_bandwidth_sc_64": avg_bandwidth_small_packet[1],
                             "avg_bandwidth_cs_MTU": avg_bandwidth_big_packet[0],
                             "avg_bandwidth_sc_MTU": avg_bandwidth_big_packet[1],
+                            "hops": path["hop_predicates"],
+                            "isolated_domains": isolated_domains,
                             "avg_loss": avg_loss,
                             "timestamp": timestamp,
                         }
