@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+addingNewDocs.py
+output_file.txt
+Stats.txt
+
 # Distribution / packaging
 .Python
 build/
