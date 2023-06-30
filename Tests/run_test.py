@@ -177,10 +177,10 @@ if __name__ == "__main__":
 
     destination_reached = 0
     #for each server in availableServers
-    for server in available_servers:
-        destination_reached += 1
-        #for each path in paths where path.destination_address == server.source_address
-        for i in range(iterations):
+    for i in range(iterations):
+        for server in available_servers:
+            destination_reached += 1
+            #for each path in paths where path.destination_address == server.source_address
             for path in paths:
                 if(path["destination_address"] == server["source_address"]):
                     print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
