@@ -127,6 +127,5 @@ if __name__ == "__main__":
     paths_to_be_inserted = []
 
     for server in available_servers:
-        print(server['_id'])
         paths_to_be_inserted = path_info_building(server)
         insert_paths(db, paths_to_be_inserted)
