@@ -51,7 +51,7 @@ def path_info_building(server):
 
     pattern = r"\[(\d+)\] Hops: \[([^]]+)\]\s+MTU: (\d+)\s+NextHop: ([^\s]+)\s+Expires: ([^\n]+)\s+Latency: ([^\n]+)\s+Status: ([^\n]+)\s+LocalIP: ([^\n]+)"
     matches = re.findall(pattern, output_text)
-
+    print(len(matches))
     #Almost good path info but I need to change the format of the hops field 
     for match in matches:
         path_info = {
@@ -91,7 +91,6 @@ def insert_paths(db, paths_to_be_in_db):
     bulk_operations = []
 
     for path in paths_to_be_in_db:
-        print(path)
         if path["_id"] in existing_path_ids:
             # Update operation
             bulk_operations.append(
