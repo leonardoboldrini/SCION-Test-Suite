@@ -1,5 +1,5 @@
 # SCION-Test-Suite
-This repository provides a shell which runs a python script suite to test 3 SCION's features: 
+<!--This repository provides a shell which runs a python script suite to test 3 SCION's features: 
   - Latency
   - Bandwidth
   - Loss
@@ -41,3 +41,4 @@ At this point you can run the suite, to understand how, run:
     ./test_suite.sh --help
     
 **Note:** At this moment the repository only provides the collect_path script which will collect in the DB all the available paths for each reachable server and their guranteed SCION stats. 
+-->
