@@ -46,8 +46,9 @@ def path_info_building(server):
         paths = re.match(r"\d+ Hops:", line.decode('utf-8').rstrip())
         if paths:
             hops_number = paths.group().split(" ")[0]
-            min_hops = min(min_hops, int(hops_number))
-            print("Minimum Hops: " + str(min_hops))
+            if int(hops_number) < min_hops:
+                min_hops = min(min_hops, int(hops_number))
+                print("Minimum Hops: " + str(min_hops))
             paths = False
         if not line or int(hops_number) > min_hops+1:
             break
