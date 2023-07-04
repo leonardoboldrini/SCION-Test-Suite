@@ -212,6 +212,7 @@ if __name__ == "__main__":
                             "isolated_domains": isolated_domains,
                             "avg_loss": avg_loss,
                             "timestamp": timestamp,
+                            "hops_number": len(path["hop_predicates"].split(" ")),
                         }
 
                         print(new_path)
