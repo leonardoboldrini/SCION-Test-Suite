@@ -39,7 +39,7 @@ def path_info_building(server):
     output = []
     dirty_path_info = []
     hops_number = 0
-    
+
     min_hops = 2000
     while True:
         line = proc.stdout.readline()
@@ -48,7 +48,7 @@ def path_info_building(server):
             hops_number = paths.group().split(" ")[0]
             min_hops = min(min_hops, int(hops_number))
             print("Minimum Hops: " + str(min_hops))
-
+        paths = None
         if not line or int(hops_number) > min_hops+1:
             break
         output.append(line.decode('utf-8').rstrip())
