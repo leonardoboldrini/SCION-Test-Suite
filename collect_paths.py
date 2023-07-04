@@ -35,14 +35,20 @@ def path_info_building(server):
 
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    
     # Read the output of the command and store it in a list
     output = []
     dirty_path_info = []
 
+    min_hops = 2000
     while True:
         line = proc.stdout.readline()
-        if not line:
+        paths = re.match(r"\d+ Hops:", line.decode('utf-8').rstrip())
+        if paths:
+            hops_number = paths.group().split(" ")[0]
+            min_hops = min(min_hops, int(hops_number))
+            print("Minimum Hops: " + str(min_hops))
+
+        if not line or int(hops_number) > min_hops+1:
             break
         output.append(line.decode('utf-8').rstrip())
 
