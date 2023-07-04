@@ -38,7 +38,8 @@ def path_info_building(server):
     # Read the output of the command and store it in a list
     output = []
     dirty_path_info = []
-
+    hops_number = 0
+    
     min_hops = 2000
     while True:
         line = proc.stdout.readline()
