@@ -56,7 +56,7 @@ def path_info_building(server):
 
     # Join the lines into a single string
     output_text = '\n'.join(output)
-    print(output_text)
+
     pattern = r"\[ ?(\d+)\] Hops: \[([^]]+)\]\s+MTU: (\d+)\s+NextHop: ([^\s]+)\s+Expires: ([^\n]+)\s+Latency: ([^\n]+)\s+Status: ([^\n]+)\s+LocalIP: ([^\n]+)"
     matches = re.findall(pattern, output_text)
     #Almost good path info but I need to change the format of the hops field 
@@ -93,7 +93,8 @@ def insert_paths(db, paths_to_be_in_db):
     # Access the desired collection
     paths = db['paths']
     # Get the list of existing path IDs
-    existing_path_ids = [path["_id"] for path in paths.find({}, {"_id": 1})]
+    existing_path_ids = [path["_id"] for path in paths.find({}, {"_id": 1})] 
+    new_path_ids = [path["_id"] for path in paths_to_be_in_db]
     # Prepare the bulk operations for insertion, update, and deletion
     bulk_operations = []
 
@@ -113,7 +114,7 @@ def insert_paths(db, paths_to_be_in_db):
             )
 
     # Find paths to be removed
-    paths_to_be_removed = paths.find({"_id": {"$nin": existing_path_ids}})
+    paths_to_be_removed = paths.find({"_id": {"$nin": new_path_ids}})
     for path in paths_to_be_removed:
         bulk_operations.append(
             DeleteOne({"_id": path["_id"]})
