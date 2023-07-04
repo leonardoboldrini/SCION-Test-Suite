@@ -113,16 +113,18 @@ def insert_paths(db, paths_to_be_in_db):
                 InsertOne(path)
             )
 
-    # Find paths to be removed
-    paths_to_be_removed = paths.find({"_id": {"$nin": new_path_ids}})
-    for path in paths_to_be_removed:
-        bulk_operations.append(
-            DeleteOne({"_id": path["_id"]})
-        )
-
     # Execute bulk operations
     if bulk_operations:
         paths.bulk_write(bulk_operations)
+
+def delete_paths(db, paths_to_be_deleted):
+    # Access the desired collection
+    paths = db['paths']
+    
+    # Get the list of existing path IDs
+    to_be_kept_path_ids = [path["_id"] for path in paths_to_be_deleted] 
+    
+    paths.delete_many({"_id": {"$nin": to_be_kept_path_ids}})
 
 if __name__ == "__main__":
     # Create a MongoClient object
@@ -132,7 +134,12 @@ if __name__ == "__main__":
     db = client['scionStatsDB']
     available_servers = db['availableServers'].find()
     paths_to_be_inserted = []
+    latest_paths = []
 
     for server in available_servers:
         paths_to_be_inserted = path_info_building(server)
         insert_paths(db, paths_to_be_inserted)
+        latest_paths += paths_to_be_inserted
+
+    # Delete paths that are not in the latest paths
+    delete_paths(db, latest_paths)
