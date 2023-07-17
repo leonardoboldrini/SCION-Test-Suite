@@ -7,7 +7,7 @@ import datetime
 
 #function that runs traceroute to get the average latency for one run
 def traceroute_analysis(server_address, hop_predicates):
-    cmd = f"scion traceroute {server_address} --sequence '{hop_predicates}'"
+    cmd = f"scion traceroute {server_address} --sequence '{hop_predicates}'" #CHANGE THIS LINE TO ADAPT TO YOUR traceroute COMMAND (IF NOT IN SCIONLab)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     try:
@@ -51,7 +51,7 @@ def traceroute_analysis(server_address, hop_predicates):
 
 #function that runs bwtestclient to get the average bandwidth for one run
 def bwtester_analysis(server_address, hop_predicates, packet_size):
-    cmd = f"scion-bwtestclient -s {server_address} -cs 3,{packet_size},?,150Mbps -sequence '{hop_predicates}'" #TODO: choose proper bw and packet size
+    cmd = f"scion-bwtestclient -s {server_address} -cs 3,{packet_size},?,150Mbps -sequence '{hop_predicates}'" ##CHANGE THIS LINE TO ADAPT TO YOUR bw-tester COMMAND (IF NOT IN SCIONLab)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     try:
         stdout = []
@@ -81,7 +81,7 @@ def bwtester_analysis(server_address, hop_predicates, packet_size):
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
-    cmd = f"scion ping {server_address} -c 3 --sequence '{hop_predicates}'"
+    cmd = f"scion ping {server_address} -c 3 --sequence '{hop_predicates}'" #CHANGE THIS LINE TO ADAPT TO YOUR PING COMMAND (IF NOT IN SCIONLab)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     try:
