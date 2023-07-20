@@ -13,7 +13,7 @@ display_help_info() {
     echo "  -h, --help: Display help information"
     echo "  <iterations>: Number of iterations to run the test suite"
     echo " --skip: Skip the path collection and run the test suite (optional but if present, MUST BE after <iterations>)"
-    echo " --some_only: With this, the test suite will be run for maximu 2 paths for each destination (optional but if present, MUST BE after <iterations>)"
+    echo " --some_only: With this, the test suite will be run for maximum 2 paths for each destination (optional but if present, MUST BE after <iterations>)"
 }
 
 # Iterate through the arguments
