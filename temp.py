@@ -4,7 +4,7 @@ import subprocess
 
 if __name__ == '__main__':
     servers = ["16-ffaa:0:1001", "16-ffaa:0:1002", "16-ffaa:0:1003", "16-ffaa:0:1004", "16-ffaa:0:1005", "16-ffaa:0:1007", "17-ffaa:0:1102", "17-ffaa:0:1107", "17-ffaa:0:1108", "18-ffaa:0:1201", "18-ffaa:0:1206", "19-ffaa:0:1302", "19-ffaa:0:1303", "19-ffaa:0:1309", "20-ffaa:0:1401", "20-ffaa:0:1404", "26-ffaa:0:2001", "26-ffaa:0:2002"]
-
+    mins = []
     for server in servers:
         cmd = f"scion showpaths {server} -m 1"
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
@@ -13,7 +13,7 @@ if __name__ == '__main__':
         dirty_path_info = []
         hops_number = 0
         min_hops = 2000
-        mins = []
+
         while True:
             line = proc.stdout.readline()
             paths = re.match(r"\d+ Hops:", line.decode('utf-8').rstrip())
@@ -31,4 +31,5 @@ if __name__ == '__main__':
         # Join the lines into a single string
         output_text = '\n'.join(output)
         print(output_text)
-        print(mins)
+    
+    print(mins)
