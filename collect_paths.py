@@ -1,6 +1,6 @@
 import subprocess # serve per lanciare thread
 import re
-from pymongo import InsertOne, DeleteOne, UpdateOne, MongoClient
+from pymongo import InsertOne, UpdateOne, MongoClient
 
 def convert_hop_predicates(old_hop_predicates):
     new_hop_predicates = ""

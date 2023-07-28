@@ -9,6 +9,7 @@ __pycache__/
 addingNewDocs.py
 output_file.txt
 Stats.txt
+"Backup Data"/
 
 # Distribution / packaging
 .Python
