@@ -13,6 +13,7 @@ if __name__ == '__main__':
         dirty_path_info = []
         hops_number = 0
         min_hops = 2000
+        mins = []
         while True:
             line = proc.stdout.readline()
             paths = re.match(r"\d+ Hops:", line.decode('utf-8').rstrip())
@@ -21,6 +22,7 @@ if __name__ == '__main__':
                 if int(hops_number) < min_hops:
                     min_hops = min(min_hops, int(hops_number))
                     print("Minimum Hops: " + str(min_hops))
+                    mins.append(min_hops)
                 paths = False
             if not line or int(hops_number) > min_hops+1:
                 break
@@ -29,3 +31,4 @@ if __name__ == '__main__':
         # Join the lines into a single string
         output_text = '\n'.join(output)
         print(output_text)
+        print(mins)
