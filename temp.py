@@ -32,4 +32,9 @@ if __name__ == '__main__':
         output_text = '\n'.join(output)
         print(output_text)
     
-    print(mins)
+    
+    mins_dict = {}
+    for min in mins:
+        mins_dict[min] = mins_dict.get(min, 0) + 1
+
+    print(mins_dict)
