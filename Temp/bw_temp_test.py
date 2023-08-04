@@ -5,36 +5,58 @@ import re
 from pymongo import MongoClient
 import datetime
 
-#function that runs bwtestclient to get the average bandwidth for one run
-def bwtester_analysis(server_address, hop_predicates, packet_size):
-    cmd = f"scion-bwtestclient -s {server_address} -cs 3,{packet_size},?,12Mbps -sequence '{hop_predicates}'" ##CHANGE THIS LINE TO ADAPT TO YOUR bw-tester COMMAND (IF NOT IN SCIONLab)
+#function that runs ping to get the average loss for one run
+def ping_analysis(server_address, hop_predicates):
+    cmd = f"scion ping {server_address} -c 30 --sequence '{hop_predicates}' --interval 0.1s" #CHANGE THIS LINE TO ADAPT TO YOUR PING COMMAND (IF NOT IN SCIONLab)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+
     try:
         stdout = []
         while True:
             line = proc.stdout.readline()
             if not line:
                 break
-            stdout.append(line.decode('utf-8').strip()) #
+            stdout.append(line.decode('utf-8').strip())
 
         if(len(stdout) < 2):
             print("Measurement failed")
-            return ["Information not available", "Information not available"]
+            return "Information not available"
 
-        client_server_bw_line = stdout[-3]
-        server_client_bw_line = stdout[8]
-        
-        cs_line_elements = client_server_bw_line.split(' ')
-        sc_line_elements = server_client_bw_line.split(' ')
-        
-        cs_bw = cs_line_elements[-2] + cs_line_elements[-1]
-        sc_bw = sc_line_elements[-2] + sc_line_elements[-1]
+        latency_values = []
+        for line in stdout:
+            match = re.search(r"time=([\d.]+)(ms|us|ns)", line)
+            if match:
+                value = float(match.group(1))
+                unit = match.group(2)
+                
+                # Convert to a common unit (e.g., milliseconds)
+                if unit == "us":
+                    value /= 1000
+                elif unit == "ns":
+                    value /= 1000000
+                
+                latency_values.append(value)
+        avg_latency = 0
+        count = 0
 
-        return [cs_bw, sc_bw]
+        for value in latency_values:
+            avg_latency += value
+            count += 1
+        
+        if count > 0:
+            avg_latency /= count
+
+        last_line = stdout[-1]
+
+        ll_elements = last_line.split(' ')
+
+        avg_loss = ll_elements[-5]
+
+        return avg_loss, avg_latency
+        
     except Exception as e:
-        print(f"Error in bwtester_analysis: {str(e)}")
-        return ["Information not available", "Information not available"]
-
+        print(f"Error in ping_analysis: {str(e)}")
+        return "Information not available"
 
 def insert_paths_stats(db, paths_stats):
     # Access the desired collection
@@ -90,25 +112,25 @@ if __name__ == "__main__":
                     print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
                     try:
 
-                        #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with minimum size packet
-                        avg_bandwidth_small_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(64))
-                        
-                        #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with maximum size packet
-                        avg_bandwidth_big_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(path["MTU"]))
+                        #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
+                        avg_loss, avg_latency = ping_analysis(server["source_address"], path["hop_predicates"])
 
+                        if avg_latency != "Information not available":
+                            avg_latency = str(avg_latency)+"ms"
+                        
                         timestamp = datetime.datetime.now()
                         isolated_domains = getISD(path["hop_predicates"])
 
                         new_path = {
                             "_id": path["_id"] + "_" + str(timestamp),
-                            "avg_latency": "Not Measured",
-                            "avg_bandwidth_cs_64": avg_bandwidth_small_packet[0],
-                            "avg_bandwidth_sc_64": avg_bandwidth_small_packet[1],
-                            "avg_bandwidth_cs_MTU": avg_bandwidth_big_packet[0],
-                            "avg_bandwidth_sc_MTU": avg_bandwidth_big_packet[1],
+                            "avg_latency": avg_latency,
+                            "avg_bandwidth_cs_64": "Measuring only loss",
+                            "avg_bandwidth_sc_64": "Measuring only loss",
+                            "avg_bandwidth_cs_MTU": "Measuring only loss",
+                            "avg_bandwidth_sc_MTU": "Measuring only loss",
                             "hops": path["hop_predicates"],
                             "isolated_domains": isolated_domains,
-                            "avg_loss": "Not Measured",
+                            "avg_loss": avg_loss,
                             "timestamp": timestamp,
                             "hops_number": len(path["hop_predicates"].split(" ")),
                         }
