@@ -7,7 +7,7 @@ import datetime
 
 #function that runs ping to get the average loss for one run
 def ping_analysis(server_address, hop_predicates):
-    cmd = f"scion ping {server_address} -c 30 --sequence '{hop_predicates}' --interval 0.1s" #CHANGE THIS LINE TO ADAPT TO YOUR PING COMMAND (IF NOT IN SCIONLab)
+    cmd = f"scion ping {server_address} -c 90 --sequence '{hop_predicates}' --interval 0.033s" #CHANGE THIS LINE TO ADAPT TO YOUR PING COMMAND (IF NOT IN SCIONLab)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     try:
