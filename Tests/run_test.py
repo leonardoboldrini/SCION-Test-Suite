@@ -5,53 +5,53 @@ import re
 from pymongo import MongoClient
 import datetime
 
-#function that runs traceroute to get the average latency for one run
-def traceroute_analysis(server_address, hop_predicates):
-    cmd = f"scion traceroute {server_address} --sequence '{hop_predicates}'" #CHANGE THIS LINE TO ADAPT TO YOUR traceroute COMMAND (IF NOT IN SCIONLab)
-    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+# #function that runs traceroute to get the average latency for one run
+# def traceroute_analysis(server_address, hop_predicates):
+#     cmd = f"scion traceroute {server_address} --sequence '{hop_predicates}'" #CHANGE THIS LINE TO ADAPT TO YOUR traceroute COMMAND (IF NOT IN SCIONLab)
+#     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
-    try:
-        stdout = []
-        while True:
-            line = proc.stdout.readline()
-            if not line:
-                break
-            stdout.append(line.decode('utf-8').strip())
+#     try:
+#         stdout = []
+#         while True:
+#             line = proc.stdout.readline()
+#             if not line:
+#                 break
+#             stdout.append(line.decode('utf-8').strip())
 
-        if(len(stdout) < 2):
-            print("Measurement failed")
-            return ["Information not available"]
+#         if(len(stdout) < 2):
+#             print("Measurement failed")
+#             return ["Information not available"]
 
-        last_line = stdout[-1]
-        num_samples = 0
-        avg_latency = 0
-        line_elements = last_line.split(' ')
+#         last_line = stdout[-1]
+#         num_samples = 0
+#         avg_latency = 0
+#         line_elements = last_line.split(' ')
 
-        for line in line_elements[-3:]:
-            if '*' not in line:
-                num_samples += 1
-                if "ns" in line:
-                    avg_latency += float(re.sub(r"[^\d.]", '', line))/1000000
-                elif "us" in line:
-                    avg_latency += float(re.sub(r"[^\d.]", '', line))/1000
-                else:
-                    avg_latency += float(re.sub(r"[^\d.]",'',line))
-        if num_samples > 0:
-            #compute actual average
-            avg_latency /= num_samples
-        else:
-            print("No samples found")
-            avg_latency = 0
+#         for line in line_elements[-3:]:
+#             if '*' not in line:
+#                 num_samples += 1
+#                 if "ns" in line:
+#                     avg_latency += float(re.sub(r"[^\d.]", '', line))/1000000
+#                 elif "us" in line:
+#                     avg_latency += float(re.sub(r"[^\d.]", '', line))/1000
+#                 else:
+#                     avg_latency += float(re.sub(r"[^\d.]",'',line))
+#         if num_samples > 0:
+#             #compute actual average
+#             avg_latency /= num_samples
+#         else:
+#             print("No samples found")
+#             avg_latency = 0
 
-        return avg_latency
-    except Exception as e:
-        print(f"Error in traceroute_analysis: {str(e)}")
-        return "Information not available"
+#         return avg_latency
+#     except Exception as e:
+#         print(f"Error in traceroute_analysis: {str(e)}")
+#         return "Information not available"
     
 
 #function that runs bwtestclient to get the average bandwidth for one run
 def bwtester_analysis(server_address, hop_predicates, packet_size):
-    cmd = f"scion-bwtestclient -s {server_address} -cs 3,{packet_size},?,150Mbps -sequence '{hop_predicates}'" ##CHANGE THIS LINE TO ADAPT TO YOUR bw-tester COMMAND (IF NOT IN SCIONLab)
+    cmd = f"scion-bwtestclient -s {server_address} -cs 3,{packet_size},?,12Mbps -sequence '{hop_predicates}'" ##CHANGE THIS LINE TO ADAPT TO YOUR bw-tester COMMAND (IF NOT IN SCIONLab)
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     try:
         stdout = []
@@ -185,6 +185,9 @@ if __name__ == "__main__":
                 if(path["destination_address"] == server["source_address"]):
                     print("Measuring for Server: " + server["source_address"] + " --- Path: " + path["_id"] + ", " + path["hop_predicates"])                
                     try:
+                        
+                        #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
+                        avg_loss, avg_latency = ping_analysis(server["source_address"], path["hop_predicates"])
 
                         #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with minimum size packet
                         avg_bandwidth_small_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(64))
@@ -192,8 +195,7 @@ if __name__ == "__main__":
                         #run BWtester <server.src_address> --hop_predicates <path.hop_predicates> with maximum size packet
                         avg_bandwidth_big_packet = bwtester_analysis(server["source_address"], path["hop_predicates"], str(path["MTU"]))
 
-                        #run Ping <server.src_address> --hop_predicates <path.hop_predicates>
-                        avg_loss, avg_latency = ping_analysis(server["source_address"], path["hop_predicates"])
+
 
                         if avg_latency != "Information not available":
                             avg_latency = str(avg_latency)+"ms"
