@@ -178,6 +178,7 @@ if __name__ == "__main__":
     destination_reached = 0
     #for each server in availableServers
     for i in range(iterations):
+        print("______# " + str(i) + " iteration______")
         for server in available_servers:
             destination_reached += 1
             #for each path in paths where path.destination_address == server.source_address
