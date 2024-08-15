@@ -141,5 +141,5 @@ if __name__ == "__main__":
         insert_paths(db, paths_to_be_inserted)
         latest_paths += paths_to_be_inserted
 
-    # Delete paths that are not in the latest paths
-    delete_paths(db, latest_paths)
+    # Delete paths that are not in the latest paths COMMENTED FOR PURPOSE OF TESTING ONE DESTINATION AT A TIME
+    # delete_paths(db, latest_paths)
